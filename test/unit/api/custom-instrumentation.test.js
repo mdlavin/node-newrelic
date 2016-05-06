@@ -339,6 +339,20 @@ describe('The custom instrumentation API', function () {
 
       txHandler()
     })
+
+    it('should allow changing the transaction name of background transactions', function (done) {
+      var txHandler = api.createBackgroundTransaction('old name', function (outerTx) {
+        var tx = agent.tracer.getTransaction()
+
+        api.setTransactionName('new_name')
+        api.endTransaction()
+
+        expect(tx.name).to.be.equal('OtherTransaction/Nodejs/new_name')
+        done()
+      })
+
+      txHandler()
+    })
   })
 
   describe('when creating an background transaction', function () {
